@@ -9,12 +9,18 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("TCHLv0.1");
     //读取保存的task
     openlist();
-    writelist();
-    //初始化 StringList
-    //为模型设置StringList，会导入StringList的内容
-    thetaskModel->setStringList(thetaskStrList);
-    //为listView设置数据模型
-    ui->tasklist->setModel(thetaskModel);
+    loaddatatoqlist();
+
+    taskmodel->setHeaderData(0,Qt::Horizontal, "未完成");
+    taskmodel->setHeaderData(1,Qt::Horizontal, "进行中");
+    taskmodel->setHeaderData(2,Qt::Horizontal, "已完成");
+    //taskmodel->setHeaderData(0,Qt::Vertical, "记录一");
+    //taskmodel->setHeaderData(1,Qt::Vertical, "记录二");
+    //taskmodel->setHeaderData(2,Qt::Vertical, "记录三");
+    //taskmodel->setItem(0, 0, new QStandardItem("张三"));
+    //taskmodel->setItem(0, 1, new QStandardItem("3"));
+    //taskmodel->setItem(0, 2, new QStandardItem("男"));
+    ui->tasklist->setModel(taskmodel);
 
     QTimer *timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(timerUpdata()));
@@ -38,30 +44,56 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+    savedata();
 }
-void MainWindow::on_addButton_clicked()                                             //新建task界面
+void MainWindow::savedata()                                                                 //写入数据
 {
-    n = new newtask;
-    n->show();
-    n->settaskid(taskcount);
-    n->taskname = thetaskStrList;
-    connect(n, &newtask::newtaskcreated, this, &MainWindow::addatask);
-}
-void MainWindow::on_startButton_clicked()                                           //开始task界面
-{
-    d  = new doingtask;
-    d->show();
-    taskdata n;
-    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); it++) {
-        if (it->taskname == *name) {
-            n = *it;
-            break;
-            // 找到了name为"Tom"的Person结构体，可以进行删除或更改操作
-        }
+    QJsonArray task;
+    QJsonObject taskitem;
+    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+        taskdata &n = *it;
+        taskitem.insert("taskname",n.taskname);
+        taskitem.insert("taskdetail",n.taskdetail);
+        //qDebug() << QDate::fromString((n.startdate).toString("yyyy-MM-dd"),"yyyy-MM-dd");
+        taskitem.insert("taskstartdate",(n.startdate).toString("yyyy-MM-dd"));
+        taskitem.insert("taskenddate",(n.enddate).toString("yyyy-MM-dd"));
+        taskitem.insert("taskid",n.taskid);
+        taskitem.insert("taskstate",n.taskstate);
+        taskitem.insert("creationtime",(n.creationtime).toString("yyyy-MM-dd hh:mm:ss"));
+        task.append(taskitem);
     }
-    d->settaskname(n.taskname);
-    d->settaskdetail(n.taskdetail);
-    //d->settasktime();
+    QJsonDocument doc(task);
+    QByteArray json = doc.toJson();
+    QFile file(filePath);
+    file.open(QFile::WriteOnly);
+    file.write(json);
+    file.close();
+}
+void MainWindow::loaddatatoqlist()                                               //读取
+{
+    QFile file(filePath);
+    file.open(QFile::ReadOnly);
+    QByteArray all = file.readAll();
+    file.close();
+    QJsonDocument doc = QJsonDocument::fromJson(all);
+    QJsonArray arr = doc.array();
+    taskcount = arr.size();
+    for(int i = 0;i < taskcount;i++){
+        QJsonValue value = arr.at(i);
+        QJsonObject obj = value.toObject();
+        taskdata o;
+        o.taskname = (obj.value("taskname")).toString();
+        o.taskdetail = (obj.value("taskdetail")).toString();
+        //qDebug() <<(obj.value("taskstartdate")).toString("yyyy-MM-dd")<<"\n";
+        o.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
+        o.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
+        o.taskid = (obj.value("taskdid")).toInt();
+        o.taskstate = (obj.value("taskstate")).toInt();
+        o.creationtime = QDateTime::fromString((obj.value("creationtime")).toString("yyyy-MM-dd hh:mm:ss"),"yyyy-MM-dd hh:mm:ss");
+        taskqlist.append(o);
+    }
+
+    //qDebug()<< o.taskname <<o.taskdetail<<o.startdate<<o.enddate<<o.taskid;
 }
 void MainWindow::timerUpdata()                                                      //更新时间
 {
@@ -84,112 +116,30 @@ void MainWindow::on_tasklist_clicked(const QModelIndex &index)                  
     ui->startButton->show();
     *name = ui->tasklist->model()->data(index).toString();
     //*id= ui->tasklist->currentIndex().row();
+    qDebug() << *name;
+
 }
-void MainWindow::addatask(taskdata newtask){                                            //来自newtask的槽函数，新建task并保存
-    addtasklistitem(newtask.gettaskname());
-    taskcount ++;
-    writeJson(newtask);
-    //qDebug()<<QDate::fromString( newtask.startdate.toString("yyyy-MM-dd"),"yyyy-MM-dd" );
-    readJson(newtask.taskid);
-}
+
 void MainWindow::addtasklistitem(QString str)                                           //添加listview的item的函数
 {
-    if(str.isEmpty())
-    {
-        qDebug() << "The content of lineEdit is empty";
-        return;
+    QStandardItem *newitem = new QStandardItem(str);
+    taskdata n;
+    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+        const taskdata &currentTask = it.next();
+        if (currentTask.taskname == str) {
+            n = currentTask;
+            break;
+        }
     }
-
-    //1.获取行数
-    int row = thetaskModel->rowCount();
-    //2.插入新行
-    thetaskModel->insertRow(row);
-    //3.获取插入行的索引index
-    QModelIndex index = thetaskModel->index(row);
-    //4.通过index设置数据
-    thetaskModel->setData(index, str);
-    //5.设置到当前index
-    ui->tasklist->setCurrentIndex(index);
-}
-
-void MainWindow::writeJson(taskdata n)                                                  //写入
-{
-    QFile source(filePath);
-    source.open(QFile::ReadOnly);
-    QByteArray all = source.readAll();
-    source.close();
-    QJsonDocument alldoc = QJsonDocument::fromJson(all);
-    QJsonArray task = alldoc.array();
-    QJsonObject taskitem;
-    taskitem.insert("taskname",n.taskname);
-    taskitem.insert("taskdetail",n.taskdetail);
-    //qDebug() << QDate::fromString((n.startdate).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-    taskitem.insert("taskstartdate",(n.startdate).toString("yyyy-MM-dd"));
-    taskitem.insert("taskenddate",(n.enddate).toString("yyyy-MM-dd"));
-    taskitem.insert("taskid",n.taskid);
-    taskitem.insert("taskstate",n.taskstate);
-    taskitem.insert("creationtime",(n.creationtime).toString("yyyy-MM-dd hh:mm:ss"));
-    task.append(taskitem);
-    QJsonDocument doc(task);
-    QByteArray json = doc.toJson();
-    QFile file(filePath);
-    file.open(QFile::WriteOnly);
-    file.write(json);
-    file.close();
-}
-
-taskdata MainWindow::readJson(int taskid)                                               //读取
-{
-    QFile file(filePath);
-    file.open(QFile::ReadOnly);
-    QByteArray all = file.readAll();
-    file.close();
-    QJsonDocument doc = QJsonDocument::fromJson(all);
-    QJsonArray arr = doc.array();
-    QJsonValue value = arr.at(taskid);
-    QJsonObject obj = value.toObject();
-    taskdata o;
-    o.taskname = (obj.value("taskname")).toString();
-    o.taskdetail = (obj.value("taskdetail")).toString();
-    //qDebug() <<(obj.value("taskstartdate")).toString("yyyy-MM-dd")<<"\n";
-    o.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-    o.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-    o.taskid = (obj.value("taskdid")).toInt();
-    o.taskstate = (obj.value("taskstate")).toInt();
-    o.creationtime = QDateTime::fromString((obj.value("creationtime")).toString("yyyy-MM-dd hh:mm:ss"),"yyyy-MM-dd hh:mm:ss");
-    return o;
-
-    //qDebug()<< o.taskname <<o.taskdetail<<o.startdate<<o.enddate<<o.taskid;
-}
-
-
-
-void MainWindow::writelist()                                                            //读取已经存好的数据写入qlist所有taskdata内容
-{
-    QFile file(filePath);
-    file.open(QFile::ReadOnly);
-    QByteArray all = file.readAll();
-    file.close();
-    QJsonDocument doc = QJsonDocument::fromJson(all);
-    QJsonArray arr = doc.array();
-    taskcount = arr.size();
-    taskdata t;
-    qDebug() << taskcount;
-    for (int i = 0; i < taskcount; ++i) {
-        QJsonValue value = arr.at(i);
-        QJsonObject obj = value.toObject();
-        t.taskname = (obj.value("taskname")).toString();
-        t.taskdetail = (obj.value("taskdetail")).toString();
-        //qDebug() <<(obj.value("taskstartdate")).toString("yyyy-MM-dd")<<"\n";
-        qDebug() << "Task Name: " << t.taskname;
-        qDebug() << "Task Detail: " << t.taskdetail;
-        t.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-        t.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-        t.taskid = (obj.value("taskdid")).toInt();
-        taskqlist.append(t);
+    int column = n.taskstate;  // 你想要的列
+    for (int row = 0; row <= taskmodel->rowCount(); ++row){
+        // 检查这个位置是否已经有项目
+        if (!taskmodel->item(row, column)) {
+            // 如果这个位置没有项目，那么在这个位置设置新的项目
+            taskmodel->setItem(row, column, newitem);
+            break;
     }
-    //qDebug()<<taskqlist.at(1).taskname;
-    file.close();
+    }
 }
 
 void MainWindow::on_deleteButton_clicked()
@@ -209,6 +159,45 @@ void MainWindow::openlist(){                                                    
         QJsonValue value = arr.at(i);
         QJsonObject obj = value.toObject();
         thetaskStrList << (obj.value("taskname")).toString();
+        QStandardItem *newitem = new QStandardItem((obj.value("taskname")).toString());
+        int column = (obj.value("taskstate")).toInt();  // 你想要的列
+        for (int row = 0; row <= taskmodel->rowCount(); ++row){
+            // 检查这个位置是否已经有项目
+            if (!taskmodel->item(row, column)) {
+                // 如果这个位置没有项目，那么在这个位置设置新的项目
+                taskmodel->setItem(row, column, newitem);
+                break;
+            }
     }
     file.close();
+}
+}
+void MainWindow::on_addButton_clicked()                                             //新建task界面
+{
+    n = new newtask;
+    n->show();
+    n->settaskid(taskcount);
+    n->taskname = thetaskStrList;
+    connect(n, &newtask::newtaskcreated, this, &MainWindow::addatask);
+}
+void MainWindow::on_startButton_clicked()                                           //开始task界面
+{
+    d  = new doingtask;
+    d->show();
+    taskdata n;
+    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+        const taskdata &currentTask = it.next();
+        if (currentTask.taskname == *name) {
+            n = currentTask;
+            break;
+        }
+    }
+    d->settaskname(n.taskname);
+    d->settaskdetail(n.taskdetail);
+    //d->settasktime();
+}
+void MainWindow::addatask(taskdata newtask){                                            //来自newtask的槽函数，新建task并保存
+    taskqlist.append(newtask);
+    addtasklistitem(newtask.gettaskname());
+    taskcount++;
 }

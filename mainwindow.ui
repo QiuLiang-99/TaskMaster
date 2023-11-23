@@ -184,12 +184,12 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="page">
-       <widget class="QListView" name="tasklist">
+       <widget class="QTableView" name="tasklist">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>141</width>
+          <width>461</width>
           <height>501</height>
          </rect>
         </property>
@@ -208,38 +208,32 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">QListView::item {
+         <string notr="true">QTableView::item {
     height: 60px;
 }
-QListView {
+QTableView {
 	font: 25 9pt &quot;Microsoft YaHei&quot;;
 	border: 15px solid white; /* 设置边框的大小，样式，颜色 */
 	border-radius: 10px;
 }
-QListView::item:hover {
+QTableView::item:hover {
 	background-color: transparent;
 	padding: 10px;
 	border-left: 3px solid rgb(130, 130, 130);
 }
-QListView::item:selected {
+QTableView::item:selected {
 	background-color: transparent;
 	color: black;
 	padding: 10px;
 	border-left: 3px solid black;
 }</string>
         </property>
-        <property name="movement">
-         <enum>QListView::Static</enum>
-        </property>
-        <property name="flow">
-         <enum>QListView::TopToBottom</enum>
-        </property>
        </widget>
        <widget class="QPushButton" name="startButton">
         <property name="geometry">
          <rect>
-          <x>180</x>
-          <y>430</y>
+          <x>490</x>
+          <y>300</y>
           <width>120</width>
           <height>48</height>
          </rect>
@@ -257,8 +251,8 @@ QListView::item:selected {
        <widget class="QPushButton" name="addButton">
         <property name="geometry">
          <rect>
-          <x>340</x>
-          <y>430</y>
+          <x>500</x>
+          <y>360</y>
           <width>120</width>
           <height>48</height>
          </rect>
@@ -295,8 +289,8 @@ QListView::item:selected {
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>290</x>
-          <y>150</y>
+          <x>470</x>
+          <y>120</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -308,8 +302,8 @@ QListView::item:selected {
        <widget class="QLabel" name="label_2">
         <property name="geometry">
          <rect>
-          <x>490</x>
-          <y>220</y>
+          <x>570</x>
+          <y>200</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -321,8 +315,8 @@ QListView::item:selected {
        <widget class="QLabel" name="label_3">
         <property name="geometry">
          <rect>
-          <x>290</x>
-          <y>220</y>
+          <x>490</x>
+          <y>200</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -334,8 +328,8 @@ QListView::item:selected {
        <widget class="QLabel" name="label_4">
         <property name="geometry">
          <rect>
-          <x>490</x>
-          <y>150</y>
+          <x>570</x>
+          <y>130</y>
           <width>54</width>
           <height>16</height>
          </rect>

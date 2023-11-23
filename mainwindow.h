@@ -14,6 +14,7 @@
 #include <QFile>
 #include <QString>
 #include <QList>
+#include <QStandardItemModel>
 
 #include "newtask.h"
 #include "doingtask.h"
@@ -37,19 +38,19 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     QString filePath = "./task.json";
-
-    void writeJson(taskdata);
-    void writelist();
+    void savedata();
+    void loaddatatoqlist();
     void openlist();
-    taskdata readJson(int);
 
     QList<taskdata> taskqlist;
     QStringList thetaskStrList;//保存初始 StringList
-    QStringListModel * thetaskModel=new QStringListModel;//创建数据模型
+    QStandardItemModel* taskmodel = new QStandardItemModel;//创建数据模型
 
     //int *id = new int;//the list item haven been chose
     QString *name = new QString;//as up
     int taskcount;
+
+
 public slots:
     void addatask(taskdata);
 
