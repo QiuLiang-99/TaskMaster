@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     openlist();
     loaddatatoqlist();
 
-    taskmodel->setHeaderData(0,Qt::Horizontal, "未完成");
+    taskmodel->setHeaderData(0,Qt::Horizontal, "未开始");
     taskmodel->setHeaderData(1,Qt::Horizontal, "进行中");
     taskmodel->setHeaderData(2,Qt::Horizontal, "已完成");
     //taskmodel->setHeaderData(0,Qt::Vertical, "记录一");
@@ -69,7 +69,7 @@ void MainWindow::savedata()                                                     
     file.write(json);
     file.close();
 }
-void MainWindow::loaddatatoqlist()                                               //读取
+void MainWindow::loaddatatoqlist()                                                          //读取数据
 {
     QFile file(filePath);
     file.open(QFile::ReadOnly);
@@ -94,30 +94,6 @@ void MainWindow::loaddatatoqlist()                                              
     }
 
     //qDebug()<< o.taskname <<o.taskdetail<<o.startdate<<o.enddate<<o.taskid;
-}
-void MainWindow::timerUpdata()                                                      //更新时间
-{
-    //QFont font("Microsoft YaHei",20,50);
-    //QDateTime time = QDateTime::currentDateTime();
-    //QString str = "当前时间" + time.toString("yyyy-MM-dd hh:mm:ss dddd");
-    //QString str1 = time.toString("yyyy-MM-dd hh:mm:ss");
-
-    //标签的文字被改变一次就要执行一次，一般放在槽函数
-    //ui->text->setText(textEdit->toPlainText());//设置文字
-
-
-    //ui -> text ->setFont(font);
-    //this -> ui->text->setText(str);
-    //ui->text->adjustSize();//自动调整
-    //ui->text->show();
-}
-void MainWindow::on_tasklist_clicked(const QModelIndex &index)                          //点击listview的函数
-{
-    ui->startButton->show();
-    *name = ui->tasklist->model()->data(index).toString();
-    //*id= ui->tasklist->currentIndex().row();
-    qDebug() << *name;
-
 }
 
 void MainWindow::addtasklistitem(QString str)                                           //添加listview的item的函数
@@ -194,6 +170,7 @@ void MainWindow::on_startButton_clicked()                                       
     }
     d->settaskname(n.taskname);
     d->settaskdetail(n.taskdetail);
+    d->setWindowTitle("任务" + n.taskname);
     //d->settasktime();
 }
 void MainWindow::addatask(taskdata newtask){                                            //来自newtask的槽函数，新建task并保存
@@ -201,3 +178,33 @@ void MainWindow::addatask(taskdata newtask){                                    
     addtasklistitem(newtask.gettaskname());
     taskcount++;
 }
+
+void MainWindow::on_tasklist_customContextMenuRequested(const QPoint &pos)            //tableview右键菜单
+{
+    QMenu menu;
+    //添加菜单项，指定图标、名称、响应函数
+
+    menu.addAction(QStringLiteral("新建"),this,SLOT(on_addButton_clicked()));
+    //在鼠标位置显示
+    if(!(name->isEmpty())){
+        menu.addAction(QStringLiteral("开始"),this,SLOT(on_startButton_clicked()));
+    };
+    menu.exec(QCursor::pos());
+}
+
+
+void MainWindow::on_tasklist_pressed(const QModelIndex &index)                          //当你选中一个item时（包括左右键）
+{
+    ui->startButton->show();
+    *name = ui->tasklist->model()->data(index).toString();
+    //*id= ui->tasklist->currentIndex().row();
+    qDebug() << *name;
+}
+
+
+void MainWindow::on_tasklist_doubleClicked(const QModelIndex &index)                //双击item函数
+
+{
+    on_startButton_clicked();
+}
+

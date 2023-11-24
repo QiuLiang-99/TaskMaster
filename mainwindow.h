@@ -5,9 +5,6 @@
 
 #include <QStringListModel>
 #include <QStringList>
-#include <QFont>
-#include <QTime>
-#include <QTimer>
 #include <qdatetime.h>
 #include <QDebug>
 #include <QDataStream>
@@ -15,6 +12,7 @@
 #include <QString>
 #include <QList>
 #include <QStandardItemModel>
+#include <QMenu>
 
 #include "newtask.h"
 #include "doingtask.h"
@@ -54,17 +52,16 @@ public:
 public slots:
     void addatask(taskdata);
 
-
+protected:
 private slots:
     void on_addButton_clicked();
     void on_startButton_clicked();
-    void on_tasklist_clicked(const QModelIndex &index);
-
-    void timerUpdata(void);
-
     void addtasklistitem(QString);
+    void on_deleteButton_clicked();
+    void on_tasklist_customContextMenuRequested(const QPoint &pos);
+    void on_tasklist_pressed(const QModelIndex &index);
+    void on_tasklist_doubleClicked(const QModelIndex &index);
 
-    void on_deleteButton_clicked();    
 private:
     Ui::MainWindow *ui;
     newtask *n;

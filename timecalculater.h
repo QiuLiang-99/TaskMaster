@@ -11,6 +11,8 @@
 #include <QDate>
 #include <QDebug>
 #include <QDateTime>
+#include <QTimer>
+#include <QTime>
 
 
 bool isDateInRange(const QDate &startDateTime, const QDate &endDateTime, const QDate &targetDate);

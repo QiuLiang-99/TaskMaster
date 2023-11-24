@@ -6,6 +6,7 @@ newtask::newtask(QWidget *parent) :
     ui(new Ui::newtask)
 {
     ui->setupUi(this);
+    setWindowTitle("新建项目");
     ui->remindlabel->hide();
     QDateTime now = QDateTime::currentDateTime();
     ui->startdate->setDate(now.date());

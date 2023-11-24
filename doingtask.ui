@@ -16,9 +16,9 @@
   <widget class="QLabel" name="taskname">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>20</y>
-     <width>141</width>
+     <x>10</x>
+     <y>10</y>
+     <width>531</width>
      <height>31</height>
     </rect>
    </property>
@@ -30,24 +30,30 @@
    <property name="text">
     <string>taskname</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QLabel" name="taskdetail">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>20</y>
-     <width>331</width>
+     <x>10</x>
+     <y>40</y>
+     <width>531</width>
      <height>31</height>
     </rect>
    </property>
    <property name="text">
     <string>taskdetail</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
   <widget class="QPushButton" name="startButton">
    <property name="geometry">
     <rect>
-     <x>50</x>
+     <x>90</x>
      <y>270</y>
      <width>80</width>
      <height>24</height>
@@ -57,43 +63,43 @@
     <string>开始</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>280</y>
-     <width>80</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="quitButton">
    <property name="geometry">
     <rect>
-     <x>400</x>
+     <x>340</x>
      <y>280</y>
      <width>80</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>停止</string>
+    <string>离开</string>
    </property>
   </widget>
   <widget class="QLabel" name="tasktime">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>130</y>
+     <x>30</x>
+     <y>110</y>
      <width>54</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
     <string>项目时间</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="speedtime">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>160</y>
+     <width>54</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>00:00:00</string>
    </property>
   </widget>
  </widget>
