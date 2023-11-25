@@ -15,7 +15,7 @@
 #include <QTime>
 
 
-bool isDateInRange(const QDate &startDateTime, const QDate &endDateTime, const QDate &targetDate);
+bool isDateInRange(const QDate &startDate, const QDate &endDate, const QDate &targetDate);
 
 void calculateTimeDifference(const QDateTime &startTime, const QDateTime &endTime);
 

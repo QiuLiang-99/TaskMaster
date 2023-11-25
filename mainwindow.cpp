@@ -11,21 +11,16 @@ MainWindow::MainWindow(QWidget *parent)
     openlist();
     loaddatatoqlist();
 
-    taskmodel->setHeaderData(0,Qt::Horizontal, "未开始");
-    taskmodel->setHeaderData(1,Qt::Horizontal, "进行中");
-    taskmodel->setHeaderData(2,Qt::Horizontal, "已完成");
-    //taskmodel->setHeaderData(0,Qt::Vertical, "记录一");
-    //taskmodel->setHeaderData(1,Qt::Vertical, "记录二");
-    //taskmodel->setHeaderData(2,Qt::Vertical, "记录三");
-    //taskmodel->setItem(0, 0, new QStandardItem("张三"));
-    //taskmodel->setItem(0, 1, new QStandardItem("3"));
-    //taskmodel->setItem(0, 2, new QStandardItem("男"));
-    ui->tasklist->setModel(taskmodel);
+    currentDate = QDate::currentDate(); // 初始化为当前日期
+    ui->taskCalendar->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动适应行高
+    ui->taskCalendar->setItemDelegate(new MyDelegate);
 
-    //可以只执行一遍，一般放在构造函数
-    ui->tasklist->setEditTriggers(QAbstractItemView::NoEditTriggers);//关闭双击可以修改item
+    openCalendar(currentDate); // 显示当前月份的日历
+
 
     ui->startButton->hide();
+
+
 
     ui->functionbuttonGroup->setId(ui->taskButton,0);
     ui->functionbuttonGroup->setId(ui->listButton,1);
@@ -51,7 +46,6 @@ void MainWindow::savedata()                                                     
         taskdata &n = *it;
         taskitem.insert("taskname",n.taskname);
         taskitem.insert("taskdetail",n.taskdetail);
-        //qDebug() << QDate::fromString((n.startdate).toString("yyyy-MM-dd"),"yyyy-MM-dd");
         taskitem.insert("taskstartdate",(n.startdate).toString("yyyy-MM-dd"));
         taskitem.insert("taskenddate",(n.enddate).toString("yyyy-MM-dd"));
         taskitem.insert("taskid",n.taskid);
@@ -82,7 +76,6 @@ void MainWindow::loaddatatoqlist()                                              
         taskdata o;
         o.taskname = (obj.value("taskname")).toString();
         o.taskdetail = (obj.value("taskdetail")).toString();
-        //qDebug() <<(obj.value("taskstartdate")).toString("yyyy-MM-dd")<<"\n";
         o.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
         o.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
         o.taskid = (obj.value("taskdid")).toInt();
@@ -91,8 +84,6 @@ void MainWindow::loaddatatoqlist()                                              
         o.timeinoneday = QTime::fromString((obj.value("timeinoneday")).toString("hh:mm:ss"),"hh:mm:ss:zzz");
         taskqlist.append(o);
     }
-
-    //qDebug()<< o.taskname <<o.taskdetail<<o.startdate<<o.enddate<<o.taskid;
 }
 
 void MainWindow::addtasklistitem(QString str)                                           //添加listview的item的函数
@@ -116,12 +107,11 @@ void MainWindow::addtasklistitem(QString str)                                   
     }
     }
 }
-
-void MainWindow::on_deleteButton_clicked()
-{
-
-}
 void MainWindow::openlist(){                                                            //初始化listview
+    taskmodel->clear();
+    QStringList headers = {"未开始", "进行中", "已完成"};
+    taskmodel->setHorizontalHeaderLabels(headers);
+    ui->tasklist->setModel(taskmodel);
     QFile file(filePath);
     file.open(QFile::ReadOnly);
     QByteArray all = file.readAll();
@@ -129,7 +119,6 @@ void MainWindow::openlist(){                                                    
     QJsonDocument doc = QJsonDocument::fromJson(all);
     QJsonArray arr = doc.array();
     taskcount = arr.size();
-    qDebug() << taskcount;
     for (int i = 0; i < taskcount; ++i) {
         QJsonValue value = arr.at(i);
         QJsonObject obj = value.toObject();
@@ -145,17 +134,76 @@ void MainWindow::openlist(){                                                    
             }
     }
     file.close();
+    }
 }
+
+void MainWindow::openCalendar(QDate date) {
+    QString dateString = currentDate.toString("yyyy年MM月");
+    ui->datenow->setText(dateString);
+    QStandardItemModel *model = new QStandardItemModel(6, 7, this); // 7 rows, 7 columns
+    ui->taskCalendar->setModel(model);
+
+    QStringList headers = {"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
+    QFont font;
+    font.setBold(true);
+    QBrush brush(Qt::red);
+
+    for (int i = 0; i < headers.size(); ++i) {
+    QStandardItem *item = new QStandardItem(headers[i]);
+    if (i >= 5) { // 周末
+            item->setFont(font);
+            item->setForeground(brush);
+    }
+    model->setHorizontalHeaderItem(i, item);
+    }
+
+
+    int weekDay = date.dayOfWeek();
+    int day = 1;
+    for (int i = 0; i < 6; ++i) {
+    for (int j = 0; j < 7; ++j) {
+            if ((i == 0 && j >= weekDay - 1) || i > 0) {
+                if (day <= date.daysInMonth()) {
+                    QString text = QString::number(day);
+                    QDate currentDate = QDate(date.year(), date.month(), day);
+                    QList<taskdata>::iterator it;
+                    for (it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+                        const taskdata &n = *it;
+                        if (isDateInRange(n.startdate,n.enddate,currentDate)) {
+                            // 找到满足需求的结构体，做一些操作...
+                            text += "\n" + n.taskname;
+                        }
+                    }
+                    QStandardItem *item = new QStandardItem(text);
+                    model->setItem(i, j, item);
+                    model->item(i, j)->setForeground(Qt::transparent);
+                    day++;
+                }
+            }
+    }
+    }
+
 }
-void MainWindow::on_addButton_clicked()                                             //新建task界面
+void MainWindow::on_nextMonthButton_clicked() {
+    currentDate = currentDate.addMonths(1); // 将日期增加一个月
+    openCalendar(currentDate); // 显示新的月份的日历
+}
+
+void MainWindow::on_lastMonthButton_clicked(){
+    currentDate = currentDate.addMonths(-1); // 将日期增加一个月
+    openCalendar(currentDate); // 显示新的月份的日历
+}
+void MainWindow::on_addButton_clicked()                                             //新建一个task界面
 {
     n = new newtask;
     n->show();
     n->settaskid(taskcount);
     n->taskname = thetaskStrList;
     connect(n, &newtask::newtaskcreated, this, &MainWindow::addatask);
+
+    n->setAttribute(Qt::WA_DeleteOnClose);
 }
-void MainWindow::on_startButton_clicked()                                           //开始task界面
+void MainWindow::on_startButton_clicked()                                           //开始一个task界面
 {
     d  = new doingtask;
     d->show();
@@ -171,7 +219,21 @@ void MainWindow::on_startButton_clicked()                                       
     d->settaskdetail(n.taskdetail);
     d->setWindowTitle("任务" + n.taskname);
     d->settimeinday(n.timeinoneday);
-    //d->settasktime();
+
+
+    d->setAttribute(Qt::WA_DeleteOnClose);
+}
+void MainWindow::on_deleteButton_clicked()                                              //删除一个taskitem
+{
+    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+        const taskdata &currentTask = it.next();
+        if (currentTask.taskname == *name) {
+            it.remove();
+            savedata();
+            openlist();
+            break;
+        }
+    }
 }
 void MainWindow::addatask(taskdata newtask){                                            //来自newtask的槽函数，新建task并保存
     taskqlist.append(newtask);
@@ -182,13 +244,58 @@ void MainWindow::addatask(taskdata newtask){                                    
 void MainWindow::on_tasklist_customContextMenuRequested(const QPoint &pos)            //tableview右键菜单
 {
     QMenu menu;
+    QMenu trans;
+    trans.setTitle("转为");
     //添加菜单项，指定图标、名称、响应函数
 
     menu.addAction(QStringLiteral("新建"),this,SLOT(on_addButton_clicked()));
     //在鼠标位置显示
     if(!(name->isEmpty())){
         menu.addAction(QStringLiteral("开始"),this,SLOT(on_startButton_clicked()));
+        menu.addAction(QStringLiteral("删除"),this,SLOT(on_deleteButton_clicked()));
     };
+    QList<taskdata>::iterator it;
+    for (it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+        taskdata n = *it;
+        if(n.taskname == *name){
+            if (0 == n.taskstate) {
+                trans.addAction(QStringLiteral("进行中"),this,[=]{
+                it->changestate(1);
+                    savedata();
+                    openlist();
+            });
+                trans.addAction(QStringLiteral("已完成"),this,[=]{
+                it->changestate(2);
+                    savedata();
+                    openlist();
+                });}
+                else if (1 == n.taskstate) {
+                trans.addAction(QStringLiteral("未开始"),this,[=]{
+                it->changestate(0);
+                    savedata();
+                    openlist();
+            });
+                trans.addAction(QStringLiteral("已完成"),this,[=]{
+                it->changestate(2);
+                    savedata();
+                    openlist();
+                });}
+                else if (2 == n.taskstate) {
+                trans.addAction(QStringLiteral("未开始"),this,[=]{
+                it->changestate(0);
+                    savedata();
+                    openlist();
+            });
+                trans.addAction(QStringLiteral("进行中"),this,[=]{
+                it->changestate(1);
+                    savedata();
+                    openlist();
+            });
+        }
+        break;
+    }
+    }
+    menu.addMenu(&trans);
     menu.exec(QCursor::pos());
 }
 
@@ -197,8 +304,7 @@ void MainWindow::on_tasklist_pressed(const QModelIndex &index)                  
 {
     ui->startButton->show();
     *name = ui->tasklist->model()->data(index).toString();
-    //*id= ui->tasklist->currentIndex().row();
-    qDebug() << *name;
+
 }
 
 

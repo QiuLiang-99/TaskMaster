@@ -18,11 +18,14 @@
 #include "doingtask/doingtask.h"
 #include "taskdata.h"
 #include "timecalculater.h"
+#include "taskCalendar/mydelegate.h"
 
 #include <QJsonDocument>
 #include <QJsonobject>
 #include <QJsonArray>
 #include <QJsonValue>
+
+#include <QTextCursor>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +42,7 @@ public:
     void savedata();
     void loaddatatoqlist();
     void openlist();
+    void openCalendar(QDate date);
 
     QList<taskdata> taskqlist;
     QStringList thetaskStrList;//保存初始 StringList
@@ -47,7 +51,7 @@ public:
     //int *id = new int;//the list item haven been chose
     QString *name = new QString;//as up
     int taskcount;
-
+    QDate currentDate;
 
 public slots:
     void addatask(taskdata);
@@ -61,6 +65,9 @@ private slots:
     void on_tasklist_customContextMenuRequested(const QPoint &pos);
     void on_tasklist_pressed(const QModelIndex &index);
     void on_tasklist_doubleClicked(const QModelIndex &index);
+
+    void on_nextMonthButton_clicked();
+    void on_lastMonthButton_clicked();
 
 private:
     Ui::MainWindow *ui;

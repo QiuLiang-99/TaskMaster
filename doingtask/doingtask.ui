@@ -89,7 +89,7 @@
     <string>TextLabel</string>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>60</x>
@@ -133,7 +133,7 @@
   <customwidget>
    <class>MyLabel</class>
    <extends>QLabel</extends>
-   <header location="global">doingtask/mylabel.h</header>
+   <header>doingtask/mylabel.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -202,7 +202,7 @@
         <property name="font">
          <font>
           <family>Microsoft YaHei</family>
-          <pointsize>9</pointsize>
+          <pointsize>-1</pointsize>
           <italic>false</italic>
           <bold>false</bold>
          </font>
@@ -229,8 +229,18 @@ QTableView::item:selected {
 	color: black;
 	padding: 10px;
 	border-left: 3px solid black;
-}</string>
+}
+QTableView { font-size: 14px; }</string>
         </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <attribute name="horizontalHeaderDefaultSectionSize">
+         <number>130</number>
+        </attribute>
+        <attribute name="verticalHeaderDefaultSectionSize">
+         <number>40</number>
+        </attribute>
        </widget>
        <widget class="QPushButton" name="startButton">
         <property name="geometry">
@@ -292,8 +302,8 @@ QTableView::item:selected {
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>470</x>
-          <y>120</y>
+          <x>520</x>
+          <y>40</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -305,8 +315,8 @@ QTableView::item:selected {
        <widget class="QLabel" name="label_2">
         <property name="geometry">
          <rect>
-          <x>570</x>
-          <y>200</y>
+          <x>500</x>
+          <y>220</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -318,8 +328,8 @@ QTableView::item:selected {
        <widget class="QLabel" name="label_3">
         <property name="geometry">
          <rect>
-          <x>490</x>
-          <y>200</y>
+          <x>510</x>
+          <y>150</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -331,8 +341,8 @@ QTableView::item:selected {
        <widget class="QLabel" name="label_4">
         <property name="geometry">
          <rect>
-          <x>570</x>
-          <y>130</y>
+          <x>510</x>
+          <y>90</y>
           <width>54</width>
           <height>16</height>
          </rect>
@@ -375,19 +385,77 @@ QTableView::item:selected {
        </widget>
       </widget>
       <widget class="QWidget" name="page_3">
-       <widget class="QLabel" name="label_5">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>210</y>
-          <width>54</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>日历</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="lastMonthButton">
+            <property name="text">
+             <string>上一个月</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="datenow">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;TextLabel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="nextMonthButton">
+            <property name="text">
+             <string>下一个月</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_4">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableView" name="taskCalendar">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <attribute name="horizontalHeaderCascadingSectionResizes">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>85</number>
+          </attribute>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>35</number>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="page_4">
        <widget class="QLabel" name="label_6">
