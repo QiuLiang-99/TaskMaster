@@ -22,9 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     //taskmodel->setItem(0, 2, new QStandardItem("男"));
     ui->tasklist->setModel(taskmodel);
 
-    QTimer *timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(timerUpdata()));
-    timer->start(1000);
     //可以只执行一遍，一般放在构造函数
     ui->tasklist->setEditTriggers(QAbstractItemView::NoEditTriggers);//关闭双击可以修改item
 
@@ -60,6 +57,7 @@ void MainWindow::savedata()                                                     
         taskitem.insert("taskid",n.taskid);
         taskitem.insert("taskstate",n.taskstate);
         taskitem.insert("creationtime",(n.creationtime).toString("yyyy-MM-dd hh:mm:ss"));
+        taskitem.insert("timeinoneday",(n.timeinoneday).toString("hh:mm:ss:zzz"));
         task.append(taskitem);
     }
     QJsonDocument doc(task);
@@ -90,6 +88,7 @@ void MainWindow::loaddatatoqlist()                                              
         o.taskid = (obj.value("taskdid")).toInt();
         o.taskstate = (obj.value("taskstate")).toInt();
         o.creationtime = QDateTime::fromString((obj.value("creationtime")).toString("yyyy-MM-dd hh:mm:ss"),"yyyy-MM-dd hh:mm:ss");
+        o.timeinoneday = QTime::fromString((obj.value("timeinoneday")).toString("hh:mm:ss"),"hh:mm:ss:zzz");
         taskqlist.append(o);
     }
 
@@ -171,6 +170,7 @@ void MainWindow::on_startButton_clicked()                                       
     d->settaskname(n.taskname);
     d->settaskdetail(n.taskdetail);
     d->setWindowTitle("任务" + n.taskname);
+    d->settimeinday(n.timeinoneday);
     //d->settasktime();
 }
 void MainWindow::addatask(taskdata newtask){                                            //来自newtask的槽函数，新建task并保存

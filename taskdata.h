@@ -18,6 +18,7 @@ struct taskdata
     QDate startdate;
     QDate enddate;
     QDateTime creationtime;
+    QTime timeinoneday;
 
 
     QString gettaskname(void){return taskname;};
@@ -33,6 +34,7 @@ struct taskdata
         enddate={2023,11,1};
         creationtime = QDateTime::currentDateTime();
         taskstate = 0;
+        timeinoneday = {1,0,0,0};
     }
 };
 

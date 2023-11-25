@@ -15,7 +15,7 @@
 #include <QMenu>
 
 #include "newtask.h"
-#include "doingtask.h"
+#include "doingtask/doingtask.h"
 #include "taskdata.h"
 #include "timecalculater.h"
 

@@ -2,11 +2,12 @@
 #define DOINGTASK_H
 
 #include <QWidget>
-#include "timecalculater.h"
+#include "../timecalculater.h"
 
 #include <QObject>
 #include <QLabel>
 #include <QPainter>
+#include "mylabel.h"
 
 namespace Ui {
 class doingtask;
@@ -24,6 +25,7 @@ public:
 
     void settaskdetail(const QString &taskdetail);
     void settasktime(const QString &tasktime);
+    void settimeinday(QTime);
 
 
     QTimer *timer;
@@ -35,10 +37,11 @@ private slots:
     void on_quitButton_clicked();
     void on_startButton_clicked();
     void update();
+    void timeEnd();
 
 private:
     Ui::doingtask *ui;
-    double m_time;
+    double sectime;
     QTimer *m_timer;//定时器，用于给计时器发送时间
 };
 

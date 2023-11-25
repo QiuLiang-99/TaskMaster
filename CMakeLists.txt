@@ -26,8 +26,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         newtask.h newtask.cpp newtask.ui
         timecalculater.cpp
         timecalculater.h
-        doingtask.h doingtask.cpp doingtask.ui
         taskdata.h
+        doingtask/doingtask.h doingtask/doingtask.cpp doingtask/doingtask.ui
+        doingtask/mylabel.h doingtask/mylabel.cpp
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET TCHL APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
