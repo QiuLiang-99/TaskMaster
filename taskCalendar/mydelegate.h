@@ -8,7 +8,7 @@ class MyDelegate : public QStyledItemDelegate {
     Q_OBJECT
 
 public:
-    MyDelegate(QObject *parent = nullptr);
+    explicit MyDelegate(QObject *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };

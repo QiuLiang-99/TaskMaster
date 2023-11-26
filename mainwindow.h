@@ -69,6 +69,10 @@ private slots:
     void on_nextMonthButton_clicked();
     void on_lastMonthButton_clicked();
 
+    void on_nextWeekButton_clicked();
+
+    void on_lastWeekButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     newtask *n;

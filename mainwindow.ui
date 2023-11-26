@@ -181,7 +181,7 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="page">
        <widget class="QTableView" name="tasklist">
@@ -242,114 +242,96 @@ QTableView { font-size: 14px; }</string>
          <number>40</number>
         </attribute>
        </widget>
-       <widget class="QPushButton" name="startButton">
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>470</x>
+          <y>20</y>
+          <width>191</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="name_1">
+           <property name="text">
+            <string>项目名称</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="timeinday_1">
+           <property name="text">
+            <string>今日时长</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="remaintime_1">
+           <property name="text">
+            <string>剩余时长</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="totaltime_1">
+           <property name="text">
+            <string>总时长</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>490</x>
           <y>300</y>
-          <width>120</width>
-          <height>48</height>
+          <width>122</width>
+          <height>158</height>
          </rect>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>开始</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="addButton">
-        <property name="geometry">
-         <rect>
-          <x>500</x>
-          <y>360</y>
-          <width>120</width>
-          <height>48</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>新建</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="deleteButton">
-        <property name="geometry">
-         <rect>
-          <x>500</x>
-          <y>430</y>
-          <width>120</width>
-          <height>48</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>48</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>删除</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>40</y>
-          <width>54</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>项目名称</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_2">
-        <property name="geometry">
-         <rect>
-          <x>500</x>
-          <y>220</y>
-          <width>54</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>总时长</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>510</x>
-          <y>150</y>
-          <width>54</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>剩余时长</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_4">
-        <property name="geometry">
-         <rect>
-          <x>510</x>
-          <y>90</y>
-          <width>54</width>
-          <height>16</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>今日时长</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QPushButton" name="startButton">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>开始</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="addButton">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>新建</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="deleteButton">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>删除</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </widget>
       <widget class="QWidget" name="page_2">
@@ -389,16 +371,16 @@ QTableView { font-size: 14px; }</string>
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="lastMonthButton">
             <property name="text">
-             <string>PushButton</string>
+             <string>上一个月</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="lastMonthButton">
+           <widget class="QPushButton" name="lastWeekButton">
             <property name="text">
-             <string>上一个月</string>
+             <string>上一周</string>
             </property>
            </widget>
           </item>
@@ -413,16 +395,16 @@ QTableView { font-size: 14px; }</string>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="nextMonthButton">
+           <widget class="QPushButton" name="nextWeekButton">
             <property name="text">
-             <string>下一个月</string>
+             <string>下一周</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="nextMonthButton">
             <property name="text">
-             <string>PushButton</string>
+             <string>下一个月</string>
             </property>
            </widget>
           </item>
@@ -432,7 +414,7 @@ QTableView { font-size: 14px; }</string>
          <widget class="QTableView" name="taskCalendar">
           <property name="font">
            <font>
-            <pointsize>14</pointsize>
+            <pointsize>9</pointsize>
            </font>
           </property>
           <property name="styleSheet">

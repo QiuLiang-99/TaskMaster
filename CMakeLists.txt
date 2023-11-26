@@ -29,7 +29,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         taskdata.h
         doingtask/doingtask.h doingtask/doingtask.cpp doingtask/doingtask.ui
         doingtask/mylabel.h doingtask/mylabel.cpp
-        taskCalendar/mydelegate.h taskCalendar/mydelegate.cpp
+
 
     )
 # Define target properties for Android with Qt 6 as:
