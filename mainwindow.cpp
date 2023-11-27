@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle("TCHLv0.1");
+    setWindowTitle("TaskMasterv0.1");
     loaddatatoqlist(); //读取保存的task
     openlist();//刷新任务清单
     currentDate = QDate::currentDate(); // 初始化为当前日期

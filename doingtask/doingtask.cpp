@@ -6,7 +6,8 @@ doingtask::doingtask(QWidget *parent) :
     ui(new Ui::doingtask)
 {
     ui->setupUi(this);
-
+    timecircle = new MyLabel(this);
+    timecircle->setGeometry(180,70,200,200);
 
     time.setHMS(0,0,0,0);//设置初始值
     timer = new QTimer(this);//创建一个定时器
@@ -38,7 +39,7 @@ void doingtask::timeEnd()
         m_timer->stop();
         return;
     }
-    ui->m_time->setTime(sectime);
+    timecircle->setTime(sectime);
     sectime --;
 
 }
@@ -86,8 +87,8 @@ void doingtask::settimeinday(QTime n)
     int seconds = static_cast<int>(n_seconds);
     QTime a(hours,minutes,seconds,0);
     qDebug()<< a;
-    ui->m_time->setTime(sectime);
-    ui->m_time->settotaltime(sectime);
+    timecircle->setTime(sectime);
+    timecircle->settotaltime(sectime);
 }
 
 void doingtask::on_startButton_clicked()

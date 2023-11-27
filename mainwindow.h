@@ -24,6 +24,8 @@
 #include <QJsonobject>
 #include <QJsonArray>
 #include <QJsonValue>
+#include <QStandardPaths>
+#include <QDir>
 
 #include <QTextCursor>
 
@@ -38,7 +40,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    QString filePath = "./task.json";
+    QString documentsPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    QString filePath = QDir(documentsPath).filePath("TaskMaster/task.json");
     void savedata();
     void loaddatatoqlist();
     void openlist();

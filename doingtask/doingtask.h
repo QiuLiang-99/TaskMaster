@@ -43,6 +43,7 @@ private:
     Ui::doingtask *ui;
     double sectime;
     QTimer *m_timer;//定时器，用于给计时器发送时间
+    MyLabel *timecircle;
 };
 
 #endif // DOINGTASK_H
