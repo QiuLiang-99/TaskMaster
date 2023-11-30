@@ -14,7 +14,6 @@ newtask::newtask(QWidget *parent) :
     ui->remindtime->setTime(now.time());
 
     //ui->w1->setStyleSheet("border-radius:5px;");
-    //qDebug()<<ui->statebuttonGroup->checkedId();
     ui->statebuttonGroup->setId(ui->state0,0);
     ui->statebuttonGroup->setId(ui->state1,1);
     ui->statebuttonGroup->setId(ui->state2,2);
@@ -60,7 +59,6 @@ void newtask::on_addButton_clicked()
         n.enddate = ui->enddate->date();
         n.taskstate = ui->statebuttonGroup->checkedId();
         n.timeinoneday={ui->hourspinBox->value(),ui->minutespinBox->value(),0,0};
-        qDebug()<<n.timeinoneday;
         emit newtaskcreated(n);
         newtask::close();
 }

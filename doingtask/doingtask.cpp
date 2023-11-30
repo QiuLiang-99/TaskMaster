@@ -15,11 +15,15 @@ doingtask::doingtask(QWidget *parent) :
 
     m_timer = new QTimer(this);
     connect(m_timer,&QTimer::timeout,this,&doingtask::timeEnd);
+    tasktime.start = QTime::currentTime();
 
 }
 
 doingtask::~doingtask()
 {
+    tasktime.end = QTime::currentTime();
+    tasktime.total = time;
+    emit thistimedone(tasktime);
     delete ui;
 }
 void doingtask::update()
@@ -77,16 +81,13 @@ void doingtask::settasktime(const QString &tasktime){
 void doingtask::settimeinday(QTime n)
 {
     int n_seconds = n.hour()*3600 + n.minute()*60 + n.second() + n.msec()/1000.0;
-    qDebug() << n_seconds;
     sectime = n_seconds;
-    qDebug() << sectime;
     int hours = static_cast<int>(n_seconds) / 3600;
     n_seconds -= hours * 3600;
     int minutes = static_cast<int>(n_seconds) / 60;
     n_seconds -= minutes * 60;
     int seconds = static_cast<int>(n_seconds);
     QTime a(hours,minutes,seconds,0);
-    qDebug()<< a;
     timecircle->setTime(sectime);
     timecircle->settotaltime(sectime);
 }

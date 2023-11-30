@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "../timecalculater.h"
+#include "../taskdata.h"
 
 #include <QObject>
 #include <QLabel>
@@ -33,6 +34,9 @@ public:
     bool n = false;//isthisstart？
     void startbuttonf(bool&);
     void initForm();
+    counttime tasktime;
+signals:
+    void thistimedone(counttime);
 private slots:
     void on_quitButton_clicked();
     void on_startButton_clicked();

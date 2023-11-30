@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QString>
 #include <QList>
+#include <QVector>
 #include <QStandardItemModel>
 #include <QMenu>
 
@@ -47,7 +48,7 @@ public:
     void openlist();
     void openCalendar(QDate date);
 
-    QList<taskdata> taskqlist;
+    QVector<taskdata> taskqlist;
     QStringList thetaskStrList;//保存初始 StringList
     QStandardItemModel* taskmodel = new QStandardItemModel;//创建数据模型
 
@@ -58,6 +59,7 @@ public:
 
 public slots:
     void addatask(taskdata);
+    void onetaskdone(counttime);
 
 protected:
 private slots:

@@ -1,5 +1,4 @@
 #include "mylabel.h"
-#include<QDebug>
 
 #pragma execution_character_set("utf-8")
 

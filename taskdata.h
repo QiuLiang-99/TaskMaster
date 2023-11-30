@@ -6,7 +6,12 @@
 #include <QDataStream>
 #include <QFile>
 #include <QDebug>
-
+struct counttime{
+    QTime start;
+    QTime end;
+    QTime total;
+    counttime() {start = {0,0,0},end = {0,0,0}, total = {0,0,0};}
+};
 struct taskdata
 {
     QString taskname;
@@ -19,6 +24,8 @@ struct taskdata
     QDate enddate;
     QDateTime creationtime;
     QTime timeinoneday;
+
+    QMap<QDate,counttime> timedata;
 
 
     QString gettaskname(void){return taskname;};
@@ -35,6 +42,9 @@ struct taskdata
         creationtime = QDateTime::currentDateTime();
         taskstate = 0;
         timeinoneday = {1,0,0,0};
+    }
+    void appendtime(counttime n){
+        timedata.insert(QDate::currentDate(),n);
     }
 };
 

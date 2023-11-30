@@ -34,8 +34,8 @@ MainWindow::~MainWindow()
 void MainWindow::savedata()                                                                 //写入数据
 {
     QJsonArray task;
-    QJsonObject taskitem;
-    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+    for (QVector<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+        QJsonObject taskitem;
         taskdata &n = *it;
         taskitem.insert("taskname",n.taskname);
         taskitem.insert("taskdetail",n.taskdetail);
@@ -45,6 +45,20 @@ void MainWindow::savedata()                                                     
         taskitem.insert("taskstate",n.taskstate);
         taskitem.insert("creationtime",(n.creationtime).toString("yyyy-MM-dd hh:mm:ss"));
         taskitem.insert("timeinoneday",(n.timeinoneday).toString("hh:mm:ss:zzz"));
+        // 手动构建 JSON 对象保存 QMap<QDate, counttime>
+        QJsonObject timedataObj;
+        for (auto timedataIt = n.timedata.begin(); timedataIt != n.timedata.end(); ++timedataIt) {
+            QDate date = timedataIt.key();
+            const counttime& ct = timedataIt.value();
+
+            QJsonObject counttimeObj;
+            counttimeObj.insert("start", ct.start.toString("hh:mm:ss"));
+            counttimeObj.insert("end", ct.end.toString("hh:mm:ss"));
+            counttimeObj.insert("total", ct.total.toString("hh:mm:ss"));
+
+            timedataObj.insert(date.toString("yyyy-MM-dd"), counttimeObj);
+        }
+        taskitem.insert("timedata", timedataObj);
         task.append(taskitem);
     }
     QJsonDocument doc(task);
@@ -63,27 +77,45 @@ void MainWindow::loaddatatoqlist()                                              
     QJsonDocument doc = QJsonDocument::fromJson(all);
     QJsonArray arr = doc.array();
     taskcount = arr.size();
-    for(int i = 0;i < taskcount;i++){
+    for (int i = 0; i < taskcount; i++) {
         QJsonValue value = arr.at(i);
         QJsonObject obj = value.toObject();
         taskdata o;
         o.taskname = (obj.value("taskname")).toString();
         o.taskdetail = (obj.value("taskdetail")).toString();
-        o.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
-        o.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"),"yyyy-MM-dd");
+        o.startdate = QDate::fromString((obj.value("taskstartdate")).toString("yyyy-MM-dd"), "yyyy-MM-dd");
+        o.enddate = QDate::fromString((obj.value("taskenddate")).toString("yyyy-MM-dd"), "yyyy-MM-dd");
         o.taskid = (obj.value("taskdid")).toInt();
         o.taskstate = (obj.value("taskstate")).toInt();
-        o.creationtime = QDateTime::fromString((obj.value("creationtime")).toString("yyyy-MM-dd hh:mm:ss"),"yyyy-MM-dd hh:mm:ss");
-        o.timeinoneday = QTime::fromString((obj.value("timeinoneday")).toString("hh:mm:ss"),"hh:mm:ss:zzz");
+        o.creationtime = QDateTime::fromString((obj.value("creationtime")).toString("yyyy-MM-dd hh:mm:ss"), "yyyy-MM-dd hh:mm:ss");
+        o.timeinoneday = QTime::fromString((obj.value("timeinoneday")).toString("hh:mm:ss"), "hh:mm:ss:zzz");
+
+        // 处理timedata
+        QVariantMap variantMap = (obj.value("timedata")).toVariant().toMap();
+        QMap<QDate, counttime> timedata;
+        for (auto it = variantMap.begin(); it != variantMap.end(); ++it) {
+            QDate date = QDate::fromString(it.key(), "yyyy-MM-dd");
+
+            QVariantMap counttimeMap = it.value().toMap();
+            counttime ct;
+            ct.start = counttimeMap.value("start").toTime();
+            ct.end = counttimeMap.value("end").toTime();
+            ct.total = counttimeMap.value("total").toTime();
+
+            timedata.insert(date, ct);
+        }
+        o.timedata = timedata;
+
         taskqlist.append(o);
     }
+
 }
 
 void MainWindow::addtasklistitem(QString str)                                           //添加listview的item的函数
 {
     QStandardItem *newitem = new QStandardItem(str);
     taskdata n;
-    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+    for (QMutableVectorIterator<taskdata> it(taskqlist);it.hasNext();) {
         const taskdata &currentTask = it.next();
         if (currentTask.taskname == str) {
             n = currentTask;
@@ -105,7 +137,7 @@ void MainWindow::openlist(){                                                    
     QStringList headers = {"未开始", "进行中", "已完成"};
     taskmodel->setHorizontalHeaderLabels(headers);
     ui->tasklist->setModel(taskmodel);
-    QList<taskdata>::iterator it;
+    QVector<taskdata>::iterator it;
     for (it = taskqlist.begin(); it != taskqlist.end(); ++it) {
     const taskdata &n = *it;
     thetaskStrList << n.taskname;
@@ -122,7 +154,7 @@ void MainWindow::openlist(){                                                    
     }
 }
 
-void MainWindow::openCalendar(QDate date) {
+void MainWindow::openCalendar(QDate date) {                                                     //初始化日历
     int year, week;
     week = date.weekNumber(&year); // 获取年份和周数
     QString dateString = QString("%1年%2月 第%3周").arg(year).arg(date.month()).arg(week);
@@ -155,7 +187,7 @@ void MainWindow::openCalendar(QDate date) {
     model->setItem(0, i, item);
     // 检查每个Data对象
     int row = 1;
-    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+    for (QVector<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
             const taskdata &n = *it;
             if (isDateInRange(n.startdate, n.enddate, currentDate)) {
             QStandardItem *valueItem = new QStandardItem(n.taskname);
@@ -205,7 +237,7 @@ void MainWindow::on_startButton_clicked()                                       
     d  = new doingtask;
     d->show();
     taskdata n;
-    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+    for (QMutableVectorIterator<taskdata> it(taskqlist);it.hasNext();) {
         const taskdata &currentTask = it.next();
         if (currentTask.taskname == *name) {
             n = currentTask;
@@ -217,12 +249,13 @@ void MainWindow::on_startButton_clicked()                                       
     d->setWindowTitle("任务" + n.taskname);
     d->settimeinday(n.timeinoneday);
 
-
+    connect(d, &doingtask::thistimedone, this, &MainWindow::onetaskdone);
     d->setAttribute(Qt::WA_DeleteOnClose);
+    this->hide();
 }
 void MainWindow::on_deleteButton_clicked()                                              //删除一个taskitem
 {
-    for (QMutableListIterator<taskdata> it(taskqlist);it.hasNext();) {
+    for (QMutableVectorIterator<taskdata> it(taskqlist);it.hasNext();) {
         const taskdata &currentTask = it.next();
         if (currentTask.taskname == *name) {
             it.remove();
@@ -236,6 +269,19 @@ void MainWindow::addatask(taskdata newtask){                                    
     taskqlist.append(newtask);
     addtasklistitem(newtask.gettaskname());
     taskcount++;
+}
+
+void MainWindow::onetaskdone(counttime time)                                                 //来自doingtask的槽函数，保存时间
+{
+    this->show();
+    taskdata n;
+    for (QMutableVectorIterator<taskdata> it(taskqlist);it.hasNext();) {
+        taskdata &currentTask = it.next();
+        if (currentTask.taskname == *name) {
+            currentTask.appendtime(time);
+            break;
+        }
+    }
 }
 
 void MainWindow::on_tasklist_customContextMenuRequested(const QPoint &pos)            //tableview右键菜单
@@ -253,7 +299,7 @@ void MainWindow::on_tasklist_customContextMenuRequested(const QPoint &pos)      
         menu.addAction(QStringLiteral("删除"),this,SLOT(on_deleteButton_clicked()));
 
     trans.setTitle("转为");
-    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+    for (QVector<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
         taskdata n = *it;
         if(n.taskname == *name){
             if (0 == n.taskstate) {
@@ -300,7 +346,7 @@ void MainWindow::on_tasklist_pressed(const QModelIndex &index)                  
 {
     ui->startButton->show();
     *name = ui->tasklist->model()->data(index).toString();
-    for (QList<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
+    for (QVector<taskdata>::iterator it = taskqlist.begin(); it != taskqlist.end(); ++it) {
     const taskdata &n = *it;
     if (n.taskname == *name) {
         ui->name_1->setText("项目名称："+n.taskname);
