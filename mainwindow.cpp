@@ -191,7 +191,10 @@ void MainWindow::openCalendar(QDate date) {                                     
             const taskdata &n = *it;
             if (isDateInRange(n.startdate, n.enddate, currentDate)) {
             QStandardItem *valueItem = new QStandardItem(n.taskname);
-            model->setItem(row, i, valueItem); // 在匹配的Data对象的下一行添加一个新项目
+            //QTextDocument *doc = new QTextDocument();
+            
+            //doc->setHtml(QString::fromStdString(text));            
+            model->setItem(row, i, valueItem);//->setToolTip(QString(doc->toPlainText())); // 在匹配的Data对象的下一行添加一个新项目
             row++;
             }
     }
@@ -199,12 +202,11 @@ void MainWindow::openCalendar(QDate date) {                                     
 
 
 }
-
+//日历控件的按钮
 void MainWindow::on_nextMonthButton_clicked() {
     currentDate = currentDate.addMonths(1); // 将日期增加一个月
     openCalendar(currentDate); // 显示新的月份的日历
 }
-
 void MainWindow::on_lastMonthButton_clicked(){
     currentDate = currentDate.addMonths(-1); // 将日期增加一个月
     openCalendar(currentDate); // 显示新的月份的日历
@@ -214,8 +216,6 @@ void MainWindow::on_nextWeekButton_clicked()
     currentDate = currentDate.addDays(7); // 将日期增加一个月
     openCalendar(currentDate); // 显示新的月份的日历
 }
-
-
 void MainWindow::on_lastWeekButton_clicked()
 {
     currentDate = currentDate.addDays(-7); // 将日期增加一个月
@@ -359,12 +359,8 @@ void MainWindow::on_tasklist_pressed(const QModelIndex &index)                  
 
 }
 
-
 void MainWindow::on_tasklist_doubleClicked(const QModelIndex &index)                //双击item函数
 
 {
     on_startButton_clicked();
 }
-
-
-
